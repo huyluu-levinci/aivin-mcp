@@ -7,7 +7,6 @@ A Model Context Protocol (MCP) server designed for OpenAI Agent Builder, providi
 - **DOCX Reader Tool**: Extract and search relevant sections from DOCX documents
 - **Addition Tool**: Perform basic arithmetic operations
 - **Multiple Transports**: Support for both Server-Sent Events (SSE) and StreamableHTTP
-- **Authentication**: Client key validation middleware
 - **TypeScript**: Full TypeScript support with type safety
 
 ## Installation
@@ -33,10 +32,7 @@ npm run build
 Create a `.env` file in the root directory with the following variables:
 
 ```env
-MCP_PRIVATE_KEY=your-private-key
 MCP_SERVER_NAME=aivin-mcp-server
-MCP_TOKEN_SECRET=your-token-secret
-MCP_TOKEN_EXPIRES_IN=1h
 MCP_SERVER_VERSION=0.1.0
 PORT=3000
 ```
@@ -118,8 +114,6 @@ src/
 ├── config/             # Configuration management
 ├── tools/              # MCP tools (add, docx-reader)
 ├── transports/         # Transport implementations (SSE, StreamableHTTP)
-├── middlewares/        # Express middlewares
-├── resources/          # Resource handlers
 └── documents/          # Document storage directory
 ```
 
@@ -129,12 +123,10 @@ src/
 - `express` - Web framework
 - `mammoth` - DOCX file processing
 - `cheerio` - HTML parsing
-- `jsonwebtoken` - Token handling
 
 ## Development Notes
 
 - The server binds to `0.0.0.0` to accept external connections
-- Client key authentication is implemented but can be extended
 - DOCX files should be placed in `src/documents/` directory
 - SSE connections support session-based messaging
 
