@@ -1,0 +1,11 @@
+{
+  "name": "minimal-mcp-server",
+  "description": "A minimal MCP server for use with OpenAI Agent Builder. Exposes /mcp for receiving requests.",
+  "version": "0.1.0",
+  "host": "localhost",
+  "port": 3000,
+  "endpoints": [
+    { "path": "/", "method": "POST", "description": "MCP endpoint - echoes and broadcasts request body over SSE" },
+    { "path": "/", "method": "GET", "description": "SSE endpoint for Agent Builder connections" }
+  ]
+}
