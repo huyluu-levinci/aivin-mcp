@@ -1,109 +1,143 @@
-# Minimal MCP Server
+# Aivin MCP Server
 
-This is a minimal Model Context Protocol (MCP) server intended as a starting point for the OpenAI Agent Builder. It listens on port `8080` by default and provides a simple `/mcp` endpoint to receive/echo MCP requests.
+A Model Context Protocol (MCP) server designed for OpenAI Agent Builder, providing tools for document processing and basic calculations. Built with TypeScript and Express, featuring both SSE and StreamableHTTP transports.
 
-**Files created**
+## Features
 
-- `package.json` - project metadata and dependency
-- `index.js` - the server implementation
-- `Dockerfile` - buildable image (exposes `8080`)
-- `mcp-manifest.json` - simple manifest you can reference
+- **DOCX Reader Tool**: Extract and search relevant sections from DOCX documents
+- **Addition Tool**: Perform basic arithmetic operations
+- **Multiple Transports**: Support for both Server-Sent Events (SSE) and StreamableHTTP
+- **Authentication**: Client key validation middleware
+- **TypeScript**: Full TypeScript support with type safety
 
-**Endpoints**
+## Installation
 
-- `GET /` : SSE endpoint for Agent Builder connections
-- `GET /status` : sanity response
-- `GET /health` : health-check JSON
-- `GET /.well-known/mcp.json` : discovery manifest
-- `POST /` : MCP endpoint (echoes request body)
+1. Clone the repository:
+```bash
+git clone https://github.com/huyluu-levinci/aivin-mcp.git
+cd aivin-mcp
+```
 
-docker build -t minimal-mcp-server:latest .
-docker run --rm -p 8080:8080 minimal-mcp-server:latest
-**Run locally (Windows cmd.exe) using Node.js**
-
-1. Install dependencies:
-
-```cmd
-cd d:\\Levinci\\levinci-mcp
+2. Install dependencies:
+```bash
 npm install
 ```
 
-2. Start server (binds to all interfaces so you can expose the port):
+3. Build the project:
+```bash
+npm run build
+```
 
-```cmd
-set PORT=3000
+## Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+MCP_PRIVATE_KEY=your-private-key
+MCP_SERVER_NAME=aivin-mcp-server
+MCP_TOKEN_SECRET=your-token-secret
+MCP_TOKEN_EXPIRES_IN=1h
+MCP_SERVER_VERSION=0.1.0
+PORT=3000
+```
+
+## Usage
+
+### Development
+
+Start the development server with hot reload:
+```bash
+npm run dev
+```
+
+### Production
+
+Build and start the server:
+```bash
+npm run build
 npm start
 ```
 
-Server will listen on `http://0.0.0.0:3000` and `http://localhost:3000`.
+The server will listen on `http://localhost:3000` by default.
 
-Making the server reachable externally:
+## API Endpoints
 
-- If you want the OpenAI Agent Builder to reach your local server, you need a publicly reachable URL. Options:
-  - Use a tunneling service like `ngrok`:
+- `POST /mcp` - StreamableHTTP MCP endpoint
+- `GET /sse` - Server-Sent Events endpoint for real-time connections
+- `POST /messages?sessionId=<id>` - Send messages to specific SSE sessions
 
-```cmd
+## Tools
+
+### DOCX Reader Tool
+Reads and searches DOCX files in the `src/documents` directory.
+
+**Input Schema:**
+```json
+{
+  "query": "string"
+}
+```
+
+**Output:** Relevant document sections with titles, content, and relationships.
+
+### Addition Tool
+Performs addition of two numbers.
+
+**Input Schema:**
+```json
+{
+  "a": "number",
+  "b": "number"
+}
+```
+
+**Output:**
+```json
+{
+  "result": "number"
+}
+```
+
+## Making the Server Externally Accessible
+
+For OpenAI Agent Builder to connect, expose the server externally:
+
+### Using ngrok
+```bash
 ngrok http 3000
 ```
 
-SSE (Server-Sent Events) support
+### Using Cloud Deployment
+Deploy to a cloud VM and configure firewall to allow port 3000.
 
-- Connect Agent Builder or any EventSource-capable client to the SSE endpoint:
+## Project Structure
 
-```js
-// Browser / Agent Builder style example
-const es = new EventSource("http://<your-host>:3000/");
-es.addEventListener("endpoint", (e) => {
-  const data = JSON.parse(e.data);
-  console.log("endpoint URL:", data.url);
-});
-es.addEventListener("message", (e) => {
-  const payload = JSON.parse(e.data);
-  console.log("message event:", payload);
-});
-
-// Keep listening for events...
+```
+src/
+├── server.ts          # Main server implementation
+├── config/             # Configuration management
+├── tools/              # MCP tools (add, docx-reader)
+├── transports/         # Transport implementations (SSE, StreamableHTTP)
+├── middlewares/        # Express middlewares
+├── resources/          # Resource handlers
+└── documents/          # Document storage directory
 ```
 
-- To send a message (e.g., from Agent Builder webhook), POST to `/`:
+## Dependencies
 
-```cmd
-curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d "{\"type\":\"message\",\"text\":\"hello\"}"
-```
+- `@modelcontextprotocol/sdk` - MCP protocol implementation
+- `express` - Web framework
+- `mammoth` - DOCX file processing
+- `cheerio` - HTML parsing
+- `jsonwebtoken` - Token handling
 
-- If you want to target a specific SSE client, include `targetId` in the POST body (the client receives an initial `connected` event with its id):
+## Development Notes
 
-```cmd
-curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d "{\"targetId\":\"<client-id>\",\"text\":\"private\"}"
-```
+- The server binds to `0.0.0.0` to accept external connections
+- Client key authentication is implemented but can be extended
+- DOCX files should be placed in `src/documents/` directory
+- SSE connections support session-based messaging
 
-    - Deploy to a cloud VM and open the VM firewall for port `8080`.
+## License
 
-- Note: binding to `0.0.0.0` (done in `index.js`) lets the process accept external connections. On Windows you may also need to allow Node through the Windows Firewall.
-
-**Optional: run as a managed service**
-
-- For development, add `nodemon` and run a dev script:
-
-```cmd
-npm install --save-dev nodemon
-npx nodemon index.js
-```
-
-- For production on a server, consider using a process manager like `pm2`:
-
-```cmd
-npm install -g pm2
-pm2 start index.js --name minimal-mcp-server
-pm2 save
-```
-
-**Notes**
-
-- This server is intentionally minimal: no auth or TLS. Use it as a local test harness or a starting point for implementing the full MCP semantics required by Agent Builder.
-
-If you want, I can:
-
-- Add a small OpenAPI spec for the endpoints
-- Add simple API-key auth and TLS
-- Implement a full MCP event handler according to a schema you provide
+[Add license information here]
