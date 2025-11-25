@@ -3,7 +3,6 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { createStreamableTransport } from './transports/streamableHttp';
 import { createSSETransport } from './transports/sse';
 import { config } from './config';
-import { authRouter } from './auth/auth.route';
 import { registerAllTool } from './tools/index';
 
 export const server = new McpServer({
