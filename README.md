@@ -12,17 +12,20 @@ A Model Context Protocol (MCP) server designed for OpenAI Agent Builder, providi
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/huyluu-levinci/aivin-mcp.git
 cd aivin-mcp
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Build the project:
+
 ```bash
 npm run build
 ```
@@ -42,6 +45,7 @@ PORT=3000
 ### Development
 
 Start the development server with hot reload:
+
 ```bash
 npm run dev
 ```
@@ -49,6 +53,7 @@ npm run dev
 ### Production
 
 Build and start the server:
+
 ```bash
 npm run build
 npm start
@@ -65,9 +70,11 @@ The server will listen on `http://localhost:3000` by default.
 ## Tools
 
 ### DOCX Reader Tool
+
 Reads and searches DOCX files in the `src/documents` directory.
 
 **Input Schema:**
+
 ```json
 {
   "query": "string"
@@ -77,9 +84,11 @@ Reads and searches DOCX files in the `src/documents` directory.
 **Output:** Relevant document sections with titles, content, and relationships.
 
 ### Addition Tool
+
 Performs addition of two numbers.
 
 **Input Schema:**
+
 ```json
 {
   "a": "number",
@@ -88,6 +97,7 @@ Performs addition of two numbers.
 ```
 
 **Output:**
+
 ```json
 {
   "result": "number"
@@ -99,11 +109,13 @@ Performs addition of two numbers.
 For OpenAI Agent Builder to connect, expose the server externally:
 
 ### Using ngrok
+
 ```bash
 ngrok http 3000
 ```
 
 ### Using Cloud Deployment
+
 Deploy to a cloud VM and configure firewall to allow port 3000.
 
 ## Project Structure
