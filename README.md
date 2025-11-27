@@ -1,13 +1,14 @@
 # Aivin MCP Server
 
-A Model Context Protocol (MCP) server designed for OpenAI Agent Builder, providing tools for document processing and basic calculations. Built with TypeScript and Express, featuring both SSE and StreamableHTTP transports.
+An MCP (Model Context Protocol) server for OpenAI Agent Builder that provides intelligent document querying and analysis. It specializes in reading DOCX documents, extracting hierarchical sections, scoring relevance based on queries, and returning structured results with automatic language detection for AI-guided responses. Includes basic calculation tools and supports multiple transport protocols for flexible integration.
 
 ## Features
 
-- **DOCX Reader Tool**: Extract and search relevant sections from DOCX documents
-- **Addition Tool**: Perform basic arithmetic operations
-- **Multiple Transports**: Support for both Server-Sent Events (SSE) and StreamableHTTP
-- **TypeScript**: Full TypeScript support with type safety
+- **DOCX Reader Tool**: Intelligently searches and extracts relevant sections from DOCX documents, with hierarchical content inclusion, relevance scoring prioritizing titles, parent-child expansion for whole-number sections, and automatic language detection to guide AI responses.
+- **Addition Tool**: Performs basic arithmetic addition.
+- **Multiple Transports**: Supports StreamableHTTP for request-based connections.
+- **Language Detection**: Automatically detects Vietnamese or English from user input and prepends response instructions.
+- **TypeScript**: Fully typed with comprehensive error handling and logging.
 
 ## Installation
 
@@ -64,24 +65,23 @@ The server will listen on `http://localhost:3000` by default.
 ## API Endpoints
 
 - `POST /mcp` - StreamableHTTP MCP endpoint
-- `GET /sse` - Server-Sent Events endpoint for real-time connections
-- `POST /messages?sessionId=<id>` - Send messages to specific SSE sessions
 
 ## Tools
 
 ### DOCX Reader Tool
 
-Reads and searches DOCX files in the `src/documents` directory.
+Searches DOCX files in the `src/documents` directory for relevant sections based on a translated query. Automatically detects the language of the original user input and guides the AI response accordingly.
 
 **Input Schema:**
 
 ```json
 {
+  "user_input": "string",
   "query": "string"
 }
 ```
 
-**Output:** Relevant document sections with titles, content, and relationships.
+**Output:** Relevant document sections with titles, hierarchical content, relationships, and language guidance.
 
 ### Addition Tool
 
@@ -125,7 +125,7 @@ src/
 ├── server.ts          # Main server implementation
 ├── config/             # Configuration management
 ├── tools/              # MCP tools (add, docx-reader)
-├── transports/         # Transport implementations (SSE, StreamableHTTP)
+├── transports/         # Transport implementations (StreamableHTTP)
 └── documents/          # Document storage directory
 ```
 
@@ -135,12 +135,13 @@ src/
 - `express` - Web framework
 - `mammoth` - DOCX file processing
 - `cheerio` - HTML parsing
+- `zod` - Input validation
 
 ## Development Notes
 
 - The server binds to `0.0.0.0` to accept external connections
 - DOCX files should be placed in `src/documents/` directory
-- SSE connections support session-based messaging
+- Extensive logging for debugging query processing, scoring, and language detection
 
 ## License
 
