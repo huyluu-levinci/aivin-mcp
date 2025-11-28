@@ -10,6 +10,53 @@ An MCP (Model Context Protocol) server for OpenAI Agent Builder that provides in
 - **Language Detection**: Automatically detects Vietnamese or English from user input and prepends response instructions.
 - **TypeScript**: Fully typed with comprehensive error handling and logging.
 
+## Document Upload Viability
+
+The DOCX Reader tool supports processing large documents, including those with 2,000+ lines.
+
+- **Feasibility**: Yes, documents up to 2k lines (roughly 10-20 pages) process normally without issues. The tool converts DOCX to HTML, extracts sections, scores relevance, and builds responses efficiently.
+- **Performance**: Processing time is seconds on modern hardware; memory usage stays within Node.js limits.
+- **Limitations**:
+  - Very large documents (e.g., 10k+ lines) may slow scoring or increase response size.
+  - Response strings can grow large for verbose content—consider chunking if needed.
+  - No hard file size limits, but test with your documents.
+- **Recommendations**:
+  - Place files in `src/documents/` for access.
+  - For massive docs, optimize by focusing queries on specific sections.
+  - Monitor logs for performance insights.
+
+## Learning New Coding Languages with AI
+
+This section discusses how AI systems (LLMs or specialized agents) can learn new programming languages, based on the capabilities of systems like this MCP server.
+
+### LLM vs. Agent Approaches for Learning
+
+AI systems can learn new coding languages through different mechanisms. Here's how LLMs and agents compare in their ability to acquire and apply knowledge of new languages:
+
+#### Using an LLM (e.g., Grok or Similar Models)
+
+- **Viability**: Excellent; LLMs are highly adaptable for learning new languages on the fly.
+- **Advantages**:
+  - Conversational learning: Can "learn" syntax, patterns, and best practices through user-provided examples or explanations.
+  - Instant generation: Produces code in new languages immediately after learning basics.
+  - Broad adaptability: Handles any language from training data or inferred patterns.
+- **Best For**: Rapid prototyping, code generation, and debugging in unfamiliar languages.
+- **Limitations**: Learning is session-based; may require reinforcement for complex languages.
+- **How It Learns**: Through pattern recognition in conversations—provide code snippets, rules, or examples, and the LLM adapts.
+
+#### Using a Specialized Agent (e.g., This MCP Server)
+
+- **Viability**: Limited; agents are task-focused and require explicit modifications to "learn" new languages.
+- **Advantages**:
+  - Reliable execution: Once integrated, agents can process or generate code in new languages consistently.
+  - Extensibility: Add language support via code changes, plugins, or API integrations.
+  - Specialized focus: Excels in applying learned languages to specific workflows (e.g., document processing).
+- **Best For**: Production deployment of language-specific features or tools.
+- **Limitations**: Cannot learn spontaneously; requires developer intervention to update code or configurations.
+- **How It Learns**: Through code modifications—e.g., adding parsers, compilers, or libraries for the new language.
+
+**Recommendation**: LLMs are superior for the AI itself to learn new languages quickly via interaction, while agents benefit from LLM-assisted development to incorporate those languages. For instance, use an LLM to prototype in a new language, then integrate it into an agent like this server.
+
 ## Installation
 
 1. Clone the repository:
